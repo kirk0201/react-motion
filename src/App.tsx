@@ -67,8 +67,16 @@ function App() {
   return (
     <Wrapper>
       <GlobalStyle />
-      <Box />
-      <motion.div></motion.div>
+      <GridBox>
+        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
+        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <Circle />
+        </Box>
+        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
+        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
+      </GridBox>
+      <SwitchBtn>Switch</SwitchBtn>
+      {/* <motion.div></motion.div> */}
     </Wrapper>
   );
 }
@@ -76,14 +84,39 @@ const Wrapper = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(135deg, #e09, #d0e);
 `;
-const Box = styled.div`
+const GridBox = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+`;
+const Box = styled(motion.button)`
   width: 200px;
   height: 200px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const SwitchBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+`;
+
+const Circle = styled(motion.div)`
+  margin: 0 auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
 `;
 export default App;
