@@ -1,5 +1,7 @@
 import styled, { createGlobalStyle } from "styled-components";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+
 const GlobalStyle = createGlobalStyle`
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
@@ -64,19 +66,121 @@ a {
 `;
 
 function App() {
+  const [click, setClick] = useState<string | null>(null);
+  const [circle, setCircle] = useState(false);
+  const clickHandler = (n: string | null) => {
+    setClick(n);
+  };
+  const circleHandler = () => {
+    setCircle((prev) => !prev);
+  };
+
+  const boxVariants = {
+    box1: {
+      x: -10,
+      y: -10,
+      scale: 1.1,
+    },
+    box2: {
+      x: 10,
+      y: -10,
+      scale: 1.1,
+    },
+    box3: {
+      x: -10,
+      y: 10,
+      scale: 1.1,
+    },
+    box4: {
+      x: 10,
+      y: 10,
+      scale: 1.1,
+    },
+  };
+  const overlayVariants = {
+    initial: {
+      opacity: 0,
+      scale: 0,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+    leaving: {
+      opacity: 0,
+    },
+  };
+
+  const btnVariants = {
+    initial: {
+      color: "blue",
+    },
+    visible: {
+      color: "yellow",
+    },
+    exit: {
+      color: "blue",
+    },
+  };
   return (
     <Wrapper>
       <GlobalStyle />
       <GridBox>
-        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
-        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Circle />
+        <Box
+          variants={boxVariants}
+          whileHover="box1"
+          whileTap={{ scale: 0.9 }}
+          onClick={() => clickHandler("1")}
+          layoutId={"1"}
+        ></Box>
+        <Box
+          variants={boxVariants}
+          whileHover="box2"
+          whileTap={{ scale: 0.9 }}
+          onClick={() => clickHandler("2")}
+          layoutId={"2"}
+        >
+          {circle ? null : <Circle layoutId="circle" />}
         </Box>
-        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
-        <Box whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}></Box>
+        <Box
+          variants={boxVariants}
+          whileHover="box3"
+          whileTap={{ scale: 0.9 }}
+          onClick={() => clickHandler("3")}
+          layoutId={"3"}
+        >
+          {circle ? <Circle layoutId="circle" /> : null}
+        </Box>
+        <Box
+          variants={boxVariants}
+          whileHover="box4"
+          whileTap={{ scale: 0.9 }}
+          onClick={() => clickHandler("4")}
+          layoutId={"4"}
+        ></Box>
       </GridBox>
-      <SwitchBtn>Switch</SwitchBtn>
-      {/* <motion.div></motion.div> */}
+      <SwitchBtn
+        onClick={circleHandler}
+        variants={btnVariants}
+        initial="initial"
+        animate={circle ? "visible" : "exit"}
+        exit="exit"
+      >
+        Switch
+      </SwitchBtn>
+      <AnimatePresence>
+        {click ? (
+          <Overlay
+            variants={overlayVariants}
+            initial="initial"
+            animate="visible"
+            exit="leaving"
+            onClick={() => setClick(null)}
+          >
+            <Box layoutId={click} style={{ width: "400px", height: "200px" }} />
+          </Overlay>
+        ) : null}
+      </AnimatePresence>
     </Wrapper>
   );
 }
@@ -102,7 +206,7 @@ const Box = styled(motion.button)`
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const SwitchBtn = styled.button`
+const SwitchBtn = styled(motion.button)`
   display: flex;
   justify-content: center;
   margin-top: 20px;
@@ -118,5 +222,15 @@ const Circle = styled(motion.div)`
   height: 50px;
   border-radius: 50%;
   background-color: white;
+`;
+
+const Overlay = styled(motion.div)`
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export default App;
